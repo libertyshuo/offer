@@ -302,49 +302,54 @@ class Solution:
         array = [[0]*cols for i in range(rows)]
         self.r = self.c = [None]*len(path)
         for i in range(0,rows):
-            for j in range(0,cols):
-                array[i][j]=matrix[cols*i+j]
-        return self.arr(array, path,-1,-1)
-    def arr(self,array, path,row,col):
-        rows,cols=len(array),len(array[0])
-        for i in range(0,rows):
-            for j in range(0,cols):
-                if array[i][j]==path[0] and i>row and j>col:
-                    label = [[0]*cols for i in range(rows)]     #做标记
-                    label[i][j]=1
-                    self.r[0]=i
-                    self.c[0]=j
-                    print i,j,array[i][j],path[0],self.r,self.c,label
-                    self.core(i,j,array,path,1,self.r,self.c,label)
+            for j in range(0, cols):
+                array[i][j] = matrix[cols * i + j]
+        return self.arr(array, path, -1, -1)
+
+    def arr(self, array, path, row, col):
+        rows, cols = len(array), len(array[0])
+        for i in range(0, rows):
+            for j in range(0, cols):
+                if array[i][j] == path[0]:
+                    label = [[0]*cols for temp in range(rows)]     #做标记
+                    label[i][j] = 1
+                    # record pos path
+                    self.r[0] = i
+                    self.c[0] = j
+                    print i, j, array[i][j], path[0], self.r, self.c, label
+                    if self.core(i, j, array, path, 1, self.r, self.c, label):
+                        return True
         return False
-    def core(self,row,col,array,path,pi,r,c,label):
+
+    def core(self, row, col, array, path, pi, r, c, label):
         if pi == len(path):
             return True
-        elif row>0 and pi>=0 and pi<len(path):
-            if array[row-1][col]==path[pi] and label[row-1][col]!=1:
-                label[row-1][col]=1
-                r[pi],c[pi]=row-1,col
-                return self.core(row-1,col,array,path,pi+1,r,c,label)
-        elif row<len(array)-1 and pi>=0 and pi<len(path):
-            if array[row+1][col]==path[pi] and label[row+1][col]!=1:
-                label[row+1][col]=1
-                r[pi],c[pi]=row+1,col
-                return self.core(row+1,col,array,path,pi+1,r,c,label)
-        elif col>0 and pi>=0 and pi<len(path):
-            if array[row,col-1]==path[pi] and label[row,col-1]!=1:
-                label[row,col-1]=1
-                r[pi],c[pi]=row,col-1
-                return self.core(row,col-1,array,path,pi+1,r,c,label)
-        elif col<len(array[0])-1 and pi>=0 and pi<len(path):
-            if array[row][col+1]==path[pi] and label[row][col+1]!=1:
-                label[row][col+1]=1
-                r[pi],c[pi]=row,col+1
-                return self.core(row,col+1,array,path,pi+1,r,c,label)
-        elif pi==1:
-            return self.arr(array, path,row,col)
-        else:
-            label[r[pi]][c[pi]]=0
-            return self.core(r[pi-1],c[pi-1],array,path,pi-1,r,c,label)
+        # up
+        if row>0:
+            if array[row-1][col] == path[pi] and label[row-1][col] != 1:
+                label[row-1][col] = 1
+                r[pi], c[pi] = row-1, col
+                return self.core(row-1, col, array, path, pi+1, r, c, label)
+        # right
+        if col<len(array)-1:
+            if array[row+1][col] == path[pi] and label[row+1][col] != 1:
+                label[row+1][col] = 1
+                r[pi], c[pi] = row+1, col
+                return self.core(row+1, col, array, path, pi+1, r, c, label)
+        # left
+        if col>0:
+            if array[row][col-1] == path[pi] and label[row][col-1] != 1:
+                label[row][col-1] = 1
+                r[pi],c[pi] = row,col-1
+                return self.core(row, col-1, array, path, pi+1, r, c, label)
+        # down
+        if row<len(array)-1:
+            if array[row+1][col] == path[pi] and label[row+1][col] != 1:
+                label[row+1][col] = 1
+                r[pi], c[pi] = row+1, col
+                return self.core(row+1, col, array, path, pi+1, r, c, label)
+
+
 if __name__ == '__main__':
     a = Solution()
     print a.hasPath(['e','s','f','e','s','g','j','o'],4,2,'es')
