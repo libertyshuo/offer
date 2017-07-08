@@ -304,6 +304,7 @@ class Solution:
         for i in range(0,rows):
             for j in range(0, cols):
                 array[i][j] = matrix[cols * i + j]
+        # self.printList(array)
         return self.arr(array, path, -1, -1)
 
     def arr(self, array, path, row, col):
@@ -316,12 +317,17 @@ class Solution:
                     # record pos path
                     self.r[0] = i
                     self.c[0] = j
-                    print i, j, array[i][j], path[0], self.r, self.c, label
+                    # print i, j, array[i][j], path[0], self.r, self.c, label
+                    print "=" * 10
+                    print label
                     if self.core(i, j, array, path, 1, self.r, self.c, label):
                         return True
+                    print "=" * 10
+
         return False
 
     def core(self, row, col, array, path, pi, r, c, label):
+        print pi, row, col
         if pi == len(path):
             return True
         # up
@@ -329,27 +335,65 @@ class Solution:
             if array[row-1][col] == path[pi] and label[row-1][col] != 1:
                 label[row-1][col] = 1
                 r[pi], c[pi] = row-1, col
-                return self.core(row-1, col, array, path, pi+1, r, c, label)
-        # right
-        if col<len(array)-1:
-            if array[row+1][col] == path[pi] and label[row+1][col] != 1:
-                label[row+1][col] = 1
-                r[pi], c[pi] = row+1, col
-                return self.core(row+1, col, array, path, pi+1, r, c, label)
-        # left
-        if col>0:
-            if array[row][col-1] == path[pi] and label[row][col-1] != 1:
-                label[row][col-1] = 1
-                r[pi],c[pi] = row,col-1
-                return self.core(row, col-1, array, path, pi+1, r, c, label)
+                # self.printList(label)
+                if self.core(row-1, col, array, path, pi+1, r, c, label):
+                    return True
+                else:
+                    label[row-1][col] = 0
+                    r[pi], c[pi] = None, None
+                    # pi -= 1
         # down
         if row<len(array)-1:
             if array[row+1][col] == path[pi] and label[row+1][col] != 1:
                 label[row+1][col] = 1
                 r[pi], c[pi] = row+1, col
-                return self.core(row+1, col, array, path, pi+1, r, c, label)
+                # self.printList(label)
+                if self.core(row+1, col, array, path, pi+1, r, c, label):
+                    return True
+                else:
+                    label[row+1][col] = 0
+                    r[pi], c[pi] = None, None
+                    # pi -= 1
+
+        # left
+        if col>0:
+            if array[row][col-1] == path[pi] and label[row][col-1] != 1:
+                label[row][col-1] = 1
+                r[pi],c[pi] = row,col-1
+                # self.printList(label)
+                if self.core(row, col-1, array, path, pi+1, r, c, label):
+                    return True
+                else:
+                    label[row][col-1] = 0
+                    r[pi],c[pi] = None, None
+                    # pi -= 1
+        # right
+        if col<len(array[0])-1:
+            if array[row][col+1] == path[pi] and label[row][col+1] != 1:
+                label[row][col+1] = 1
+                r[pi], c[pi] = row, col+1
+                # self.printList(label)
+                if self.core(row, col+1, array, path, pi+1, r, c, label):
+                    return True
+                else:
+                    label[row][col+1] = 0
+                    r[pi], c[pi] = None, None
+                    # pi -= 1
+        
+        return False
+
+    def printList(self, data):
+        rows = 3
+        cols = 4
+        for x in xrange(0,rows):
+            print data[x]
+        # for row_ no in xrange(0, rows):
+        #     start = cols * row_no
+        #     print data[start: start + cols]
+
 
 
 if __name__ == '__main__':
     a = Solution()
-    print a.hasPath(['e','s','f','e','s','g','j','o'],4,2,'es')
+    print a.hasPath("ABCESFCSADEE",3,4,"ABCCED")
+    print a.hasPath("ABCEHJIGSFCSLOPQADEEMNOEADIDEJFMVCEIFGGS",5,8,"SLHECCEIDEJFGGFIE")
